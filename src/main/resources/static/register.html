@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — Flavor Spot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100 justify-content-between">
+
+    <!-- Simple Nav -->
+    <nav class="navbar navbar-custom py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <i class="bi bi-fire text-warning fs-3"></i>
+                <span>Flavor</span><span class="text-white">Spot</span>
+            </a>
+            <a href="index.html" class="btn btn-outline-secondary btn-sm text-white"><i class="bi bi-arrow-left me-1"></i>Back to Home</a>
+        </div>
+    </nav>
+
+    <!-- Register Container -->
+    <main class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-6">
+                <div class="card-custom p-4 p-md-5 shadow-lg">
+                    <div class="text-center mb-4">
+                        <span class="hero-badge"><i class="bi bi-person-plus me-1"></i>New Guest Registration</span>
+                        <h2 class="fw-bold text-white mb-1">Join Flavor Spot</h2>
+                        <p class="text-secondary small">Reserve tables, track culinary orders, and share your reviews</p>
+                    </div>
+
+                    <form id="register-form">
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small fw-bold">Full Name</label>
+                            <input type="text" id="fullName" class="form-control form-control-custom" placeholder="e.g. Elena Rostova" required minlength="2">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small fw-bold">Email Address</label>
+                            <input type="email" id="email" class="form-control form-control-custom" placeholder="name@example.com" required>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small fw-bold">Phone Number</label>
+                                <input type="tel" id="phoneNumber" class="form-control form-control-custom" placeholder="+1 555-0192" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small fw-bold">Password</label>
+                                <input type="password" id="password" class="form-control form-control-custom" placeholder="Min 6 characters" required minlength="6">
+                            </div>
+                        </div>
+
+                        <div id="register-error" class="alert alert-danger py-2 small" style="display: none;"></div>
+
+                        <button type="submit" id="reg-submit-btn" class="btn btn-gold w-100 py-2 mb-3">
+                            <span id="reg-btn-text">Create Account</span>
+                            <span id="reg-btn-spinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
+                        </button>
+                    </form>
+
+                    <div class="text-center text-secondary small">
+                        Already have an account? <a href="login.html" class="text-warning text-decoration-none fw-bold">Log in here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-3 text-center text-secondary small">
+        &copy; 2026 Flavor Spot.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const password = document.getElementById('password').value;
+            const errBox = document.getElementById('register-error');
+            const btnText = document.getElementById('reg-btn-text');
+            const btnSpinner = document.getElementById('reg-btn-spinner');
+
+            errBox.style.display = 'none';
+            btnText.textContent = 'Registering...';
+            btnSpinner.style.display = 'inline-block';
+
+            try {
+                const res = await apiFetch('/api/auth/register', {
+                    method: 'POST',
+                    body: JSON.stringify({ fullName, email, phoneNumber, password })
+                });
+
+                Auth.setUser(res.data);
+                showToast('Account created! Welcome to Flavor Spot.', 'success');
+
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 800);
+            } catch (err) {
+                errBox.textContent = err.message || 'Registration failed.';
+                errBox.style.display = 'block';
+                btnText.textContent = 'Create Account';
+                btnSpinner.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

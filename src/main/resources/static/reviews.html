@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Testimonials — Flavor Spot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <i class="bi bi-fire text-warning fs-3"></i>
+                <span>Flavor</span><span class="text-white">Spot</span>
+            </a>
+            <button class="navbar-toggler text-white border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <i class="bi bi-list fs-2"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="menu.html">Menu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reservation.html">Reserve Table</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="reviews.html">Testimonials</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="cart.html" class="btn btn-outline-secondary text-white position-relative border-0 p-2">
+                        <i class="bi bi-bag fs-5"></i>
+                        <span id="cart-count-badge" class="cart-badge" style="display: none;">0</span>
+                    </a>
+                    <div id="nav-auth-container" class="d-flex"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="py-5 text-center bg-surface border-bottom border-secondary border-opacity-10">
+        <div class="container">
+            <span class="hero-badge"><i class="bi bi-heart me-1"></i>Verified Diners</span>
+            <h1 class="display-5 fw-bold text-white mb-2">Guest Testimonials</h1>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Read honest reviews from food enthusiasts and celebratory parties who have dined with us.</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container py-5">
+        <div id="testimonials-grid" class="row g-4">
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-warning" role="status"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center text-secondary small border-top border-secondary border-opacity-10">
+        &copy; 2026 Flavor Spot.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        async function loadAllTestimonials() {
+            const grid = document.getElementById('testimonials-grid');
+            try {
+                const res = await apiFetch('/api/reviews/testimonials');
+                const list = res.data;
+
+                if (!list || list.length === 0) {
+                    grid.innerHTML = `<div class="col-12 text-center py-5 text-secondary">No customer reviews published yet.</div>`;
+                    return;
+                }
+
+                grid.innerHTML = list.map(r => `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card-custom p-4 h-100 d-flex flex-column justify-content-between shadow-sm">
+                            <div>
+                                <div class="star-rating mb-2 fs-5">
+                                    ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}
+                                </div>
+                                <p class="text-secondary fst-italic mb-4">"${escapeHtml(r.comment)}"</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 pt-3 border-top border-secondary border-opacity-25">
+                                <div class="bg-surface-elevated rounded-circle p-2 text-warning">
+                                    <i class="bi bi-person-fill fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-white mb-0">${escapeHtml(r.customerName)}</h6>
+                                    <small class="text-muted">Verified Dining Guest</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                grid.innerHTML = `<div class="col-12 text-center text-danger small">Failed to load testimonials.</div>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadAllTestimonials);
+    </script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard — Flavor Spot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <i class="bi bi-fire text-warning fs-3"></i>
+                <span>Flavor</span><span class="text-white">Spot</span>
+            </a>
+            <div class="collapse navbar-collapse show" id="navMenu">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="menu.html">Menu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reservation.html">Reserve Table</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reviews.html">Testimonials</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="cart.html" class="btn btn-outline-secondary text-white position-relative border-0 p-2">
+                        <i class="bi bi-bag fs-5"></i>
+                        <span id="cart-count-badge" class="cart-badge" style="display: none;">0</span>
+                    </a>
+                    <div id="nav-auth-container" class="d-flex"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="py-4 bg-surface border-bottom border-secondary border-opacity-10">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <span class="hero-badge mb-1"><i class="bi bi-person-badge me-1"></i>Diner Portal</span>
+                <h2 id="welcome-header" class="fw-bold text-white mb-0">Welcome Back</h2>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="reservation.html" class="btn btn-gold btn-sm"><i class="bi bi-calendar2-plus me-1"></i>Book New Table</a>
+                <button class="btn btn-outline-gold btn-sm" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                    <i class="bi bi-star me-1"></i>Write a Review
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container py-5">
+        <!-- Tabs -->
+        <ul class="nav nav-pills mb-4" id="dashboardTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active rounded-pill px-4" id="reservations-tab" data-bs-toggle="pill" data-bs-target="#reservations-content">
+                    <i class="bi bi-calendar-check me-2"></i>My Table Reservations
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link rounded-pill px-4" id="orders-tab" data-bs-toggle="pill" data-bs-target="#orders-content">
+                    <i class="bi bi-receipt-cutoff me-2"></i>My Food Orders
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link rounded-pill px-4" id="reviews-tab" data-bs-toggle="pill" data-bs-target="#reviews-content">
+                    <i class="bi bi-chat-quote me-2"></i>My Feedback
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="dashboardTabContent">
+            <!-- Tab 1: Reservations -->
+            <div class="tab-pane fade show active" id="reservations-content">
+                <div class="card-custom p-4 shadow-sm">
+                    <h4 class="fw-bold text-white mb-3">Reservation History</h4>
+                    <div id="reservations-table-container">
+                        <div class="text-center py-4"><div class="spinner-border text-warning"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Orders -->
+            <div class="tab-pane fade" id="orders-content">
+                <div class="card-custom p-4 shadow-sm">
+                    <h4 class="fw-bold text-white mb-3">Kitchen Food Orders</h4>
+                    <div id="orders-table-container">
+                        <div class="text-center py-4"><div class="spinner-border text-warning"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Reviews -->
+            <div class="tab-pane fade" id="reviews-content">
+                <div class="card-custom p-4 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="fw-bold text-white mb-0">Your Submitted Reviews</h4>
+                        <button class="btn btn-gold btn-sm" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                            <i class="bi bi-pencil-square me-1"></i>New Review
+                        </button>
+                    </div>
+                    <div id="reviews-list-container">
+                        <div class="text-center py-4"><div class="spinner-border text-warning"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-custom text-white border-gold">
+                <div class="modal-header border-secondary border-opacity-25">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-star-fill text-warning me-2"></i>Share Your Dining Experience</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="review-form">
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small fw-bold">Star Rating</label>
+                            <select id="review-rating" class="form-select form-select-custom" required>
+                                <option value="5" selected>★★★★★ (5 Stars - Exceptional)</option>
+                                <option value="4">★★★★☆ (4 Stars - Very Good)</option>
+                                <option value="3">★★★☆☆ (3 Stars - Average)</option>
+                                <option value="2">★★☆☆☆ (2 Stars - Below Expectations)</option>
+                                <option value="1">★☆☆☆☆ (1 Star - Poor)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small fw-bold">Review Comment (Min 10 chars)</label>
+                            <textarea id="review-comment" class="form-control form-control-custom" rows="3" placeholder="Tell us about the food quality, service, and ambiance..." required minlength="10"></textarea>
+                        </div>
+                        <div id="review-error" class="alert alert-danger py-2 small" style="display: none;"></div>
+                        <button type="submit" class="btn btn-gold w-100 py-2">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center text-secondary small border-top border-secondary border-opacity-10 mt-5">
+        &copy; 2026 Flavor Spot.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        Auth.requireAuth('login.html');
+        const user = Auth.getUser();
+
+        document.getElementById('welcome-header').textContent = `Welcome, ${user.fullName}`;
+
+        async function loadCustomerReservations() {
+            const container = document.getElementById('reservations-table-container');
+            try {
+                const res = await apiFetch(`/api/reservations/my?userId=${user.id}`);
+                const list = res.data;
+
+                if (!list || list.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-4 text-secondary">
+                            <p>You haven't reserved any tables yet.</p>
+                            <a href="reservation.html" class="btn btn-gold btn-sm">Book a Table</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0">
+                            <thead>
+                                <tr class="text-secondary small text-uppercase">
+                                    <th>Ref #</th>
+                                    <th>Table</th>
+                                    <th>Date & Time</th>
+                                    <th>Guests</th>
+                                    <th>Special Requests</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${list.map(r => `
+                                    <tr>
+                                        <td class="fw-bold text-white">#${r.id}</td>
+                                        <td>
+                                            <span class="badge bg-surface-elevated text-warning border border-warning border-opacity-25 px-2 py-1">
+                                                Table ${escapeHtml(r.tableNumber)}
+                                            </span>
+                                            <small class="text-secondary d-block mt-1">${escapeHtml(r.locationArea)}</small>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold text-white">${r.reservationDate}</div>
+                                            <small class="text-secondary">${r.reservationTime}</small>
+                                        </td>
+                                        <td class="text-white">${r.guestCount} People</td>
+                                        <td class="text-secondary small" style="max-width: 180px;">${escapeHtml(r.specialRequests || 'None')}</td>
+                                        <td>
+                                            <span class="badge-status badge-${r.status}">${r.status}</span>
+                                        </td>
+                                        <td>
+                                            ${r.status === 'CONFIRMED' ? `
+                                                <div class="d-flex gap-1">
+                                                    <a href="menu.html" class="btn btn-gold btn-sm" style="font-size: 0.75rem;" title="Order Food">Order Food</a>
+                                                    <button class="btn btn-outline-danger btn-sm" style="font-size: 0.75rem;" onclick="cancelReservation(${r.id})">Cancel</button>
+                                                </div>
+                                            ` : r.status === 'PENDING' ? `
+                                                <button class="btn btn-outline-danger btn-sm" style="font-size: 0.75rem;" onclick="cancelReservation(${r.id})">Cancel</button>
+                                            ` : `<span class="text-muted small">—</span>`}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = `<div class="text-danger small">Failed to load reservations.</div>`;
+            }
+        }
+
+        async function loadCustomerOrders() {
+            const container = document.getElementById('orders-table-container');
+            try {
+                const res = await apiFetch(`/api/orders/my?userId=${user.id}`);
+                const list = res.data;
+
+                if (!list || list.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-4 text-secondary">
+                            <p>No dining food orders placed yet.</p>
+                            <a href="menu.html" class="btn btn-gold btn-sm">Explore Menu</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0">
+                            <thead>
+                                <tr class="text-secondary small text-uppercase">
+                                    <th>Order #</th>
+                                    <th>Linked Table</th>
+                                    <th>Items Ordered</th>
+                                    <th>Total Amount</th>
+                                    <th>Kitchen Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${list.map(o => `
+                                    <tr>
+                                        <td class="fw-bold text-white">#${o.id}</td>
+                                        <td>
+                                            <span class="badge bg-surface-elevated text-warning border border-warning border-opacity-25">
+                                                Table ${escapeHtml(o.tableNumber)}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <ul class="list-unstyled mb-0 small text-secondary">
+                                                ${o.items.map(i => `<li>${i.quantity}x ${escapeHtml(i.menuItemName)}</li>`).join('')}
+                                            </ul>
+                                        </td>
+                                        <td class="fw-bold text-warning">$${parseFloat(o.totalAmount).toFixed(2)}</td>
+                                        <td>
+                                            <span class="badge-status badge-${o.status}">${o.status}</span>
+                                        </td>
+                                        <td>
+                                            ${o.status === 'PLACED' ? `
+                                                <button class="btn btn-outline-danger btn-sm" style="font-size: 0.75rem;" onclick="cancelOrder(${o.id})">Cancel</button>
+                                            ` : `<span class="text-muted small">In Kitchen</span>`}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = `<div class="text-danger small">Failed to load orders.</div>`;
+            }
+        }
+
+        async function loadCustomerReviews() {
+            const container = document.getElementById('reviews-list-container');
+            try {
+                const res = await apiFetch(`/api/reviews/my?userId=${user.id}`);
+                const list = res.data;
+
+                if (!list || list.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-4 text-secondary">
+                            <p>You haven't submitted any reviews yet.</p>
+                            <button class="btn btn-gold btn-sm" data-bs-toggle="modal" data-bs-target="#reviewModal">Leave a Review</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = list.map(r => `
+                    <div class="p-3 bg-surface-elevated rounded-3 border border-secondary border-opacity-10 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <div class="star-rating">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                            <span class="badge ${r.isApproved ? 'bg-success' : 'bg-warning text-dark'} small">
+                                ${r.isApproved ? 'Approved & Public' : 'Pending Moderation'}
+                            </span>
+                        </div>
+                        <p class="text-secondary small mb-0">${escapeHtml(r.comment)}</p>
+                    </div>
+                `).join('');
+            } catch (err) {
+                container.innerHTML = `<div class="text-danger small">Failed to load reviews.</div>`;
+            }
+        }
+
+        async function cancelReservation(id) {
+            if (confirm('Are you sure you want to cancel Reservation #' + id + '?')) {
+                try {
+                    await apiFetch(`/api/reservations/${id}/cancel?userId=${user.id}`, { method: 'PATCH' });
+                    showToast('Reservation #' + id + ' cancelled.', 'info');
+                    loadCustomerReservations();
+                } catch (e) {
+                    showToast(e.message, 'error');
+                }
+            }
+        }
+
+        async function cancelOrder(id) {
+            if (confirm('Cancel Order #' + id + '?')) {
+                try {
+                    await apiFetch(`/api/orders/${id}/cancel?userId=${user.id}`, { method: 'PATCH' });
+                    showToast('Order #' + id + ' cancelled.', 'info');
+                    loadCustomerOrders();
+                } catch (e) {
+                    showToast(e.message, 'error');
+                }
+            }
+        }
+
+        document.getElementById('review-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const rating = parseInt(document.getElementById('review-rating').value);
+            const comment = document.getElementById('review-comment').value.trim();
+            const errBox = document.getElementById('review-error');
+
+            try {
+                await apiFetch('/api/reviews', {
+                    method: 'POST',
+                    body: JSON.stringify({ userId: user.id, rating, comment })
+                });
+
+                showToast('Review submitted! It will appear once approved.', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('reviewModal')).hide();
+                document.getElementById('review-form').reset();
+                loadCustomerReviews();
+            } catch (err) {
+                errBox.textContent = err.message || 'Failed to submit review.';
+                errBox.style.display = 'block';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCustomerReservations();
+            loadCustomerOrders();
+            loadCustomerReviews();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artisanal Menu — Flavor Spot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <i class="bi bi-fire text-warning fs-3"></i>
+                <span>Flavor</span><span class="text-white">Spot</span>
+            </a>
+            <button class="navbar-toggler text-white border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <i class="bi bi-list fs-2"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="menu.html">Menu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reservation.html">Reserve Table</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reviews.html">Testimonials</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="cart.html" class="btn btn-outline-secondary text-white position-relative border-0 p-2">
+                        <i class="bi bi-bag fs-5"></i>
+                        <span id="cart-count-badge" class="cart-badge" style="display: none;">0</span>
+                    </a>
+                    <div id="nav-auth-container" class="d-flex"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="py-5 text-center bg-surface border-bottom border-secondary border-opacity-10">
+        <div class="container">
+            <span class="hero-badge"><i class="bi bi-cup-hot me-1"></i>Seasonal Selections</span>
+            <h1 class="display-5 fw-bold text-white mb-2">Our Artisanal Menu</h1>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Every dish is prepared fresh upon order by our culinary brigade using locally sourced, organic ingredients.</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container py-5">
+        <!-- Controls: Category Pills & Search -->
+        <div class="row align-items-center gy-3 mb-5">
+            <div class="col-lg-8">
+                <div id="category-pills" class="d-flex flex-wrap gap-2">
+                    <button class="category-pill active" onclick="filterCategory(null, this)">All Items</button>
+                    <!-- Injected dynamically from /api/menu/categories -->
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-surface text-secondary border-secondary border-opacity-25"><i class="bi bi-search"></i></span>
+                    <input type="text" id="search-input" class="form-control form-control-custom" placeholder="Search pizza, pasta, salmon..." oninput="handleSearch(this.value)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Grid -->
+        <div id="menu-grid" class="row g-4">
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-warning" role="status"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center text-secondary small border-top border-secondary border-opacity-10">
+        &copy; 2026 Flavor Spot.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        let allItems = [];
+        let currentCategoryId = null;
+
+        async function initMenu() {
+            await loadCategories();
+            await loadItems();
+        }
+
+        async function loadCategories() {
+            const pillContainer = document.getElementById('category-pills');
+            try {
+                const res = await apiFetch('/api/menu/categories');
+                res.data.forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.className = 'category-pill';
+                    btn.textContent = cat.name;
+                    btn.onclick = () => filterCategory(cat.id, btn);
+                    pillContainer.appendChild(btn);
+                });
+            } catch (err) {
+                console.error('Error loading categories', err);
+            }
+        }
+
+        async function loadItems(catId = null) {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-warning"></div></div>';
+            try {
+                const url = catId ? `/api/menu/items?categoryId=${catId}` : '/api/menu/items';
+                const res = await apiFetch(url);
+                allItems = res.data;
+                renderItems(allItems);
+            } catch (err) {
+                grid.innerHTML = `<div class="col-12 text-center text-danger">Failed to load menu items.</div>`;
+            }
+        }
+
+        function renderItems(items) {
+            const grid = document.getElementById('menu-grid');
+            if (!items || items.length === 0) {
+                grid.innerHTML = `<div class="col-12 text-center py-5 text-secondary">No food items found matching your criteria.</div>`;
+                return;
+            }
+
+            grid.innerHTML = items.map(item => `
+                <div class="col-md-6 col-lg-4">
+                    <div class="card-custom h-100 d-flex flex-column justify-content-between overflow-hidden shadow-sm">
+                        <div>
+                            <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'}" 
+                                 class="w-100 menu-card-img" alt="${escapeHtml(item.name)}">
+                            <div class="p-4">
+                                <span class="badge bg-dark text-warning border border-warning border-opacity-25 mb-2">${escapeHtml(item.categoryName)}</span>
+                                <h5 class="fw-bold text-white mb-2">${escapeHtml(item.name)}</h5>
+                                <p class="text-secondary small mb-0">${escapeHtml(item.description || '')}</p>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-0 d-flex justify-content-between align-items-center">
+                            <div class="menu-price">$${parseFloat(item.price).toFixed(2)}</div>
+                            <button class="btn btn-gold btn-sm d-flex align-items-center gap-1" onclick='addToCart(${JSON.stringify(item)})'>
+                                <i class="bi bi-plus-lg"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(catId, btnElement) {
+            document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+            currentCategoryId = catId;
+            loadItems(catId);
+        }
+
+        let searchTimeout;
+        function handleSearch(val) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                if (!val.trim()) {
+                    loadItems(currentCategoryId);
+                    return;
+                }
+                try {
+                    const res = await apiFetch(`/api/menu/items/search?query=${encodeURIComponent(val.trim())}`);
+                    renderItems(res.data);
+                } catch (e) {
+                    console.error(e);
+                }
+            }, 300);
+        }
+
+        function addToCart(item) {
+            Cart.addItem(item);
+        }
+
+        document.addEventListener('DOMContentLoaded', initMenu);
+    </script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserve a Table — Flavor Spot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <i class="bi bi-fire text-warning fs-3"></i>
+                <span>Flavor</span><span class="text-white">Spot</span>
+            </a>
+            <button class="navbar-toggler text-white border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <i class="bi bi-list fs-2"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="menu.html">Menu</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="reservation.html">Reserve Table</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reviews.html">Testimonials</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="cart.html" class="btn btn-outline-secondary text-white position-relative border-0 p-2">
+                        <i class="bi bi-bag fs-5"></i>
+                        <span id="cart-count-badge" class="cart-badge" style="display: none;">0</span>
+                    </a>
+                    <div id="nav-auth-container" class="d-flex"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="py-5 text-center bg-surface border-bottom border-secondary border-opacity-10">
+        <div class="container">
+            <span class="hero-badge"><i class="bi bi-calendar-event me-1"></i>Guaranteed Seating</span>
+            <h1 class="display-5 fw-bold text-white mb-2">Book Your Dining Experience</h1>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Select your preferred date, time, and table. Our intelligent conflict prevention engine ensures your private table is reserved exclusively for you.</p>
+        </div>
+    </header>
+
+    <!-- Main Booking Section -->
+    <main class="container py-5">
+        <div class="row g-5">
+            <!-- Left Column: Form -->
+            <div class="col-lg-6">
+                <div class="card-custom p-4 p-md-5 shadow-lg">
+                    <h3 class="fw-bold text-white mb-4"><i class="bi bi-sliders me-2 text-warning"></i>1. Reservation Details</h3>
+
+                    <form id="reservation-form">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small fw-bold">Date</label>
+                                <input type="date" id="res-date" class="form-control form-control-custom" required onchange="checkAvailability()">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small fw-bold">Time Slot</label>
+                                <select id="res-time" class="form-select form-select-custom" required onchange="checkAvailability()">
+                                    <option value="11:30">11:30 AM (Lunch)</option>
+                                    <option value="12:30">12:30 PM (Lunch)</option>
+                                    <option value="13:30">01:30 PM (Lunch)</option>
+                                    <option value="18:00">06:00 PM (Dinner)</option>
+                                    <option value="19:00" selected>07:00 PM (Dinner)</option>
+                                    <option value="20:00">08:00 PM (Dinner)</option>
+                                    <option value="21:00">09:00 PM (Dinner)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-secondary small fw-bold">Number of Guests</label>
+                            <select id="res-guests" class="form-select form-select-custom" required onchange="checkAvailability()">
+                                <option value="1">1 Guest (Solo Dining)</option>
+                                <option value="2" selected>2 Guests (Intimate / Date)</option>
+                                <option value="3">3 Guests</option>
+                                <option value="4">4 Guests (Family / Friends)</option>
+                                <option value="5">5 Guests</option>
+                                <option value="6">6 Guests</option>
+                                <option value="8">8 Guests (Party / VIP)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-secondary small fw-bold">Special Requests (Optional)</label>
+                            <textarea id="res-requests" class="form-control form-control-custom" rows="2" placeholder="e.g. Birthday celebration, anniversary, high-chair needed..."></textarea>
+                        </div>
+
+                        <input type="hidden" id="selected-table-id" value="">
+
+                        <div id="booking-error" class="alert alert-danger py-2 small" style="display: none;"></div>
+
+                        <button type="submit" id="book-btn" class="btn btn-gold w-100 py-3 fw-bold">
+                            <span id="book-btn-text"><i class="bi bi-check2-circle me-1"></i>Confirm Table Reservation</span>
+                            <span id="book-btn-spinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column: Visual Available Tables -->
+            <div class="col-lg-6">
+                <div class="card-custom p-4 p-md-5 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="fw-bold text-white mb-0"><i class="bi bi-grid-3x3 me-2 text-warning"></i>2. Choose Your Table</h3>
+                        <span id="avail-count-badge" class="badge bg-warning text-dark fw-bold">Checking...</span>
+                    </div>
+                    <p class="text-secondary small mb-4">Click a table below to secure that exact spot, or leave unselected to let us auto-assign the best available table.</p>
+
+                    <div id="tables-container" class="row g-3">
+                        <!-- Populated by checkAvailability() -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center text-secondary small border-top border-secondary border-opacity-10">
+        &copy; 2026 Flavor Spot.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Set default date to today or tomorrow
+        const today = new Date();
+        const dateInput = document.getElementById('res-date');
+        dateInput.min = today.toISOString().split('T')[0];
+        dateInput.value = today.toISOString().split('T')[0];
+
+        let selectedTableId = null;
+
+        async function checkAvailability() {
+            const date = document.getElementById('res-date').value;
+            const time = document.getElementById('res-time').value;
+            const guests = document.getElementById('res-guests').value;
+            const container = document.getElementById('tables-container');
+            const countBadge = document.getElementById('avail-count-badge');
+
+            if (!date || !time) return;
+
+            container.innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border text-warning spinner-border-sm"></div></div>';
+
+            try {
+                const res = await apiFetch(`/api/reservations/available-tables?date=${date}&time=${time}&guests=${guests}`);
+                const tables = res.data;
+                countBadge.textContent = `${tables.length} Free`;
+
+                if (tables.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12 text-center py-4">
+                            <div class="text-warning fs-3 mb-2"><i class="bi bi-exclamation-triangle"></i></div>
+                            <h6 class="text-white">No Tables Available</h6>
+                            <p class="text-secondary small">All tables for ${guests} guests are fully booked at ${time} on ${date}. Please try another time slot.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = tables.map(t => `
+                    <div class="col-6">
+                        <div id="table-card-${t.id}" class="table-card ${selectedTableId === t.id ? 'selected' : ''}" onclick="selectTable(${t.id})">
+                            <div class="fs-4 text-warning mb-1"><i class="bi bi-cup-straw"></i></div>
+                            <h5 class="fw-bold text-white mb-0">Table ${escapeHtml(t.tableNumber)}</h5>
+                            <div class="text-secondary small">Seats up to ${t.seatingCapacity}</div>
+                            <span class="badge bg-dark text-secondary border border-secondary border-opacity-25 mt-2" style="font-size: 0.7rem;">${escapeHtml(t.locationArea)}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                container.innerHTML = `<div class="col-12 text-center text-danger small">${escapeHtml(err.message)}</div>`;
+                countBadge.textContent = 'Error';
+            }
+        }
+
+        function selectTable(id) {
+            if (selectedTableId === id) {
+                selectedTableId = null;
+                document.getElementById('selected-table-id').value = '';
+            } else {
+                selectedTableId = id;
+                document.getElementById('selected-table-id').value = id;
+            }
+            document.querySelectorAll('.table-card').forEach(c => c.classList.remove('selected'));
+            if (selectedTableId) {
+                const card = document.getElementById('table-card-' + selectedTableId);
+                if (card) card.classList.add('selected');
+            }
+        }
+
+        document.getElementById('reservation-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!Auth.isLoggedIn()) {
+                showToast('Please log in or create an account to complete your booking.', 'info');
+                setTimeout(() => window.location.href = 'login.html', 1000);
+                return;
+            }
+
+            const user = Auth.getUser();
+            const date = document.getElementById('res-date').value;
+            const time = document.getElementById('res-time').value;
+            const guests = parseInt(document.getElementById('res-guests').value);
+            const requests = document.getElementById('res-requests').value.trim();
+            const tableId = selectedTableId ? parseInt(selectedTableId) : null;
+            const errBox = document.getElementById('booking-error');
+            const btnText = document.getElementById('book-btn-text');
+            const btnSpinner = document.getElementById('book-btn-spinner');
+
+            errBox.style.display = 'none';
+            btnText.textContent = 'Securing Table...';
+            btnSpinner.style.display = 'inline-block';
+
+            try {
+                const res = await apiFetch('/api/reservations', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        userId: user.id,
+                        tableId: tableId,
+                        reservationDate: date,
+                        reservationTime: time,
+                        guestCount: guests,
+                        specialRequests: requests
+                    })
+                });
+
+                showToast('Reservation confirmed for Table ' + res.data.tableNumber + '!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+            } catch (err) {
+                errBox.textContent = err.message || 'Failed to complete reservation.';
+                errBox.style.display = 'block';
+                btnText.innerHTML = '<i class="bi bi-check2-circle me-1"></i>Confirm Table Reservation';
+                btnSpinner.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAvailability();
+        });
+    </script>
+</body>
+</html>

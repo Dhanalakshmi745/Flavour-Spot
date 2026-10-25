@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Flavor Spot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body class="bg-dark text-white">
+
+    <!-- Admin Nav -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <i class="bi bi-shield-lock text-warning fs-3"></i>
+                <span>Flavor</span><span class="text-white">Spot</span>
+                <span class="badge bg-warning text-dark ms-2 fw-bold">Admin Portal</span>
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <a href="index.html" class="btn btn-outline-secondary btn-sm text-white"><i class="bi bi-globe me-1"></i>View Site</a>
+                <div id="nav-auth-container" class="d-flex"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container-fluid px-4 py-4">
+
+        <!-- Top KPIs Metric Row -->
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="card-custom p-3 d-flex align-items-center gap-3">
+                    <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3 fs-3">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-bold text-uppercase">Total Diners</div>
+                        <h3 id="kpi-customers" class="fw-bold text-white mb-0">...</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card-custom p-3 d-flex align-items-center gap-3">
+                    <div class="p-3 bg-success bg-opacity-10 text-success rounded-3 fs-3">
+                        <i class="bi bi-calendar2-check-fill"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-bold text-uppercase">Active Bookings</div>
+                        <h3 id="kpi-reservations" class="fw-bold text-white mb-0">...</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card-custom p-3 d-flex align-items-center gap-3">
+                    <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-3 fs-3">
+                        <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-bold text-uppercase">Gross Revenue</div>
+                        <h3 id="kpi-revenue" class="fw-bold text-warning mb-0">$0.00</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card-custom p-3 d-flex align-items-center gap-3">
+                    <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-3 fs-3">
+                        <i class="bi bi-chat-left-dots-fill"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-bold text-uppercase">Pending Reviews</div>
+                        <h3 id="kpi-reviews" class="fw-bold text-white mb-0">...</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Operational Tabs -->
+        <ul class="nav nav-pills mb-4" id="adminTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active rounded-pill px-4" id="tab-reservations" data-bs-toggle="pill" data-bs-target="#pane-reservations">
+                    <i class="bi bi-calendar-range me-2"></i>Table Reservations
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link rounded-pill px-4" id="tab-orders" data-bs-toggle="pill" data-bs-target="#pane-orders">
+                    <i class="bi bi-fire me-2"></i>Kitchen Orders
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link rounded-pill px-4" id="tab-menu" data-bs-toggle="pill" data-bs-target="#pane-menu">
+                    <i class="bi bi-card-list me-2"></i>Menu Management
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link rounded-pill px-4" id="tab-reviews" data-bs-toggle="pill" data-bs-target="#pane-reviews">
+                    <i class="bi bi-shield-check me-2"></i>Review Moderation
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="adminTabContent">
+
+            <!-- Tab 1: Reservations Management -->
+            <div class="tab-pane fade show active" id="pane-reservations">
+                <div class="card-custom p-4 shadow-sm">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                        <h4 class="fw-bold text-white mb-0">Restaurant Bookings</h4>
+                        <div class="d-flex gap-2">
+                            <select id="res-filter-status" class="form-select form-select-custom form-select-sm" onchange="loadReservations(this.value)">
+                                <option value="ALL">All Statuses</option>
+                                <option value="CONFIRMED" selected>Confirmed Only</option>
+                                <option value="PENDING">Pending Only</option>
+                                <option value="COMPLETED">Completed</option>
+                                <option value="CANCELLED">Cancelled</option>
+                            </select>
+                            <button class="btn btn-outline-secondary btn-sm text-white" onclick="loadReservations()"><i class="bi bi-arrow-clockwise"></i></button>
+                        </div>
+                    </div>
+                    <div id="admin-reservations-table">
+                        <div class="text-center py-5"><div class="spinner-border text-warning"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Kitchen Order Progression -->
+            <div class="tab-pane fade" id="pane-orders">
+                <div class="card-custom p-4 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold text-white mb-0">Live Kitchen Tickets</h4>
+                        <button class="btn btn-outline-secondary btn-sm text-white" onclick="loadOrders()"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button>
+                    </div>
+                    <div id="admin-orders-container">
+                        <div class="text-center py-5"><div class="spinner-border text-warning"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Menu Item CRUD -->
+            <div class="tab-pane fade" id="pane-menu">
+                <div class="card-custom p-4 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold text-white mb-0">Menu Catalog</h4>
+                        <button class="btn btn-gold btn-sm" onclick="openMenuItemModal()"><i class="bi bi-plus-lg me-1"></i>Add New Dish</button>
+                    </div>
+                    <div id="admin-menu-table">
+                        <div class="text-center py-5"><div class="spinner-border text-warning"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Review Moderation -->
+            <div class="tab-pane fade" id="pane-reviews">
+                <div class="card-custom p-4 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold text-white mb-0">Customer Feedback Moderation</h4>
+                        <button class="btn btn-outline-secondary btn-sm text-white" onclick="loadReviews()"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button>
+                    </div>
+                    <div id="admin-reviews-table">
+                        <div class="text-center py-5"><div class="spinner-border text-warning"></div></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Menu Item Modal (Create / Edit) -->
+    <div class="modal fade" id="menuItemModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-custom text-white border-gold">
+                <div class="modal-header border-secondary border-opacity-25">
+                    <h5 id="menu-modal-title" class="modal-title fw-bold">Add Menu Item</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="menu-item-form">
+                        <input type="hidden" id="menu-item-id" value="">
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small fw-bold">Category</label>
+                            <select id="modal-item-category" class="form-select form-select-custom" required>
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small fw-bold">Dish Name</label>
+                            <input type="text" id="modal-item-name" class="form-control form-control-custom" required placeholder="e.g. Saffron Lobster Ravioli">
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small fw-bold">Price ($)</label>
+                                <input type="number" step="0.01" min="0.01" id="modal-item-price" class="form-control form-control-custom" required placeholder="24.50">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small fw-bold">Availability</label>
+                                <select id="modal-item-avail" class="form-select form-select-custom">
+                                    <option value="true">In Stock</option>
+                                    <option value="false">Out of Stock</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small fw-bold">Image URL</label>
+                            <input type="url" id="modal-item-image" class="form-control form-control-custom" placeholder="https://images.unsplash.com/...">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-secondary small fw-bold">Description</label>
+                            <textarea id="modal-item-desc" class="form-control form-control-custom" rows="2" placeholder="Ingredients and flavor profile..."></textarea>
+                        </div>
+                        <div id="modal-menu-error" class="alert alert-danger py-2 small" style="display: none;"></div>
+                        <button type="submit" class="btn btn-gold w-100 py-2">Save Dish</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Enforce Admin Access
+        Auth.requireAdmin();
+
+        async function initDashboard() {
+            await loadKPIs();
+            await loadCategoriesForModal();
+            loadReservations('CONFIRMED');
+            loadOrders();
+            loadMenuItems();
+            loadReviews();
+        }
+
+        async function loadKPIs() {
+            try {
+                const res = await apiFetch('/api/admin/stats');
+                const s = res.data;
+                document.getElementById('kpi-customers').textContent = s.totalCustomers;
+                document.getElementById('kpi-reservations').textContent = s.activeReservations;
+                document.getElementById('kpi-revenue').textContent = '$' + parseFloat(s.totalRevenue).toFixed(2);
+                document.getElementById('kpi-reviews').textContent = s.pendingReviews;
+            } catch (e) {
+                console.error('Error fetching KPIs', e);
+            }
+        }
+
+        // -------------------------------------------------------------
+        // Reservations Management
+        // -------------------------------------------------------------
+        async function loadReservations(status = 'ALL') {
+            const container = document.getElementById('admin-reservations-table');
+            container.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-warning spinner-border-sm"></div></div>';
+            try {
+                const url = (status && status !== 'ALL') 
+                    ? `/api/reservations/admin?status=${status}` 
+                    : '/api/reservations/admin/all';
+                const res = await apiFetch(url);
+                const list = res.data;
+
+                if (!list || list.length === 0) {
+                    container.innerHTML = `<div class="text-center py-4 text-secondary">No reservations found for status: ${status}</div>`;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0">
+                            <thead>
+                                <tr class="text-secondary small text-uppercase">
+                                    <th>Ref</th>
+                                    <th>Guest</th>
+                                    <th>Table</th>
+                                    <th>Date & Time</th>
+                                    <th>Guests</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${list.map(r => `
+                                    <tr>
+                                        <td class="fw-bold text-white">#${r.id}</td>
+                                        <td>
+                                            <div class="fw-semibold text-white">${escapeHtml(r.customerName)}</div>
+                                            <small class="text-secondary">${escapeHtml(r.customerPhone)}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-surface-elevated text-warning border border-warning border-opacity-25">
+                                                Table ${escapeHtml(r.tableNumber)}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold text-white">${r.reservationDate}</div>
+                                            <small class="text-secondary">${r.reservationTime}</small>
+                                        </td>
+                                        <td class="text-white">${r.guestCount}</td>
+                                        <td><span class="badge-status badge-${r.status}">${r.status}</span></td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                ${r.status === 'PENDING' ? `
+                                                    <button class="btn btn-outline-success" onclick="updateResStatus(${r.id}, 'CONFIRMED')"><i class="bi bi-check-lg"></i> Confirm</button>
+                                                ` : ''}
+                                                ${r.status === 'CONFIRMED' ? `
+                                                    <button class="btn btn-outline-primary" onclick="updateResStatus(${r.id}, 'COMPLETED')"><i class="bi bi-check2-all"></i> Complete</button>
+                                                ` : ''}
+                                                ${r.status !== 'CANCELLED' && r.status !== 'COMPLETED' ? `
+                                                    <button class="btn btn-outline-danger" onclick="updateResStatus(${r.id}, 'CANCELLED')"><i class="bi bi-x-lg"></i> Cancel</button>
+                                                ` : ''}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = `<div class="text-danger small">Failed to load reservations.</div>`;
+            }
+        }
+
+        async function updateResStatus(id, newStatus) {
+            try {
+                await apiFetch(`/api/reservations/${id}/status?status=${newStatus}`, { method: 'PATCH' });
+                showToast(`Reservation #${id} marked as ${newStatus}`, 'success');
+                loadKPIs();
+                const curFilter = document.getElementById('res-filter-status').value;
+                loadReservations(curFilter);
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+
+        // -------------------------------------------------------------
+        // Kitchen Order Management
+        // -------------------------------------------------------------
+        async function loadOrders() {
+            const container = document.getElementById('admin-orders-container');
+            container.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-warning spinner-border-sm"></div></div>';
+            try {
+                const res = await apiFetch('/api/orders/admin/all');
+                const list = res.data;
+
+                if (!list || list.length === 0) {
+                    container.innerHTML = `<div class="text-center py-4 text-secondary">No food orders currently in the system.</div>`;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="row g-3">
+                        ${list.map(o => `
+                            <div class="col-md-6 col-xl-4">
+                                <div class="card-custom p-3 border-secondary border-opacity-25 h-100 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="fw-bold text-white fs-5">Ticket #${o.id}</span>
+                                            <span class="badge-status badge-${o.status}">${o.status}</span>
+                                        </div>
+                                        <div class="text-warning small fw-bold mb-2">
+                                            <i class="bi bi-geo-alt me-1"></i>Table ${escapeHtml(o.tableNumber)} • Guest: ${escapeHtml(o.customerName)}
+                                        </div>
+                                        <div class="p-2 bg-surface-elevated rounded mb-3">
+                                            <div class="text-secondary small fw-bold mb-1">Dishes:</div>
+                                            <ul class="list-unstyled mb-0 small text-white">
+                                                ${o.items.map(i => `<li>• <strong>${i.quantity}x</strong> ${escapeHtml(i.menuItemName)}</li>`).join('')}
+                                            </ul>
+                                            ${o.specialInstructions ? `
+                                                <div class="text-warning small mt-2 fst-italic">Note: "${escapeHtml(o.specialInstructions)}"</div>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-25">
+                                        <div class="fw-bold text-warning fs-5">$${parseFloat(o.totalAmount).toFixed(2)}</div>
+                                        <div class="dropdown">
+                                            <button class="btn btn-gold btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                Update Status
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow">
+                                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateOrderStatus(${o.id}, 'PREPARING')"><i class="bi bi-egg-fried me-2 text-warning"></i>Preparing</a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateOrderStatus(${o.id}, 'READY')"><i class="bi bi-bell me-2 text-success"></i>Ready to Serve</a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateOrderStatus(${o.id}, 'SERVED')"><i class="bi bi-check2-circle me-2 text-primary"></i>Served</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item text-danger" href="javascript:void(0)" onclick="updateOrderStatus(${o.id}, 'CANCELLED')"><i class="bi bi-x-circle me-2"></i>Cancel Order</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = `<div class="text-danger small">Failed to load kitchen orders.</div>`;
+            }
+        }
+
+        async function updateOrderStatus(id, newStatus) {
+            try {
+                await apiFetch(`/api/orders/${id}/status?status=${newStatus}`, { method: 'PATCH' });
+                showToast(`Order #${id} updated to ${newStatus}`, 'success');
+                loadKPIs();
+                loadOrders();
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+
+        // -------------------------------------------------------------
+        // Menu CRUD Management
+        // -------------------------------------------------------------
+        let categoriesList = [];
+
+        async function loadCategoriesForModal() {
+            try {
+                const res = await apiFetch('/api/menu/categories');
+                categoriesList = res.data;
+                const select = document.getElementById('modal-item-category');
+                select.innerHTML = categoriesList.map(c => `
+                    <option value="${c.id}">${escapeHtml(c.name)}</option>
+                `).join('');
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function loadMenuItems() {
+            const container = document.getElementById('admin-menu-table');
+            try {
+                const res = await apiFetch('/api/menu/items/admin/all');
+                const list = res.data;
+
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0">
+                            <thead>
+                                <tr class="text-secondary small text-uppercase">
+                                    <th>Dish</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Availability</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${list.map(item => `
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'}" 
+                                                     class="rounded-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                                <div>
+                                                    <div class="fw-bold text-white">${escapeHtml(item.name)}</div>
+                                                    <small class="text-secondary">${escapeHtml(item.description ? item.description.substring(0, 50) + '...' : '')}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-surface-elevated text-warning">${escapeHtml(item.categoryName)}</span></td>
+                                        <td class="fw-bold text-white">$${parseFloat(item.price).toFixed(2)}</td>
+                                        <td>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" role="switch" 
+                                                       ${item.isAvailable ? 'checked' : ''} 
+                                                       onchange="toggleMenuAvail(${item.id}, this.checked)">
+                                                <label class="form-check-label small ${item.isAvailable ? 'text-success' : 'text-danger'}">
+                                                    ${item.isAvailable ? 'In Stock' : 'Out of Stock'}
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-warning" onclick='openEditModal(${JSON.stringify(item)})'><i class="bi bi-pencil"></i></button>
+                                                <button class="btn btn-outline-danger" onclick="deleteMenuItem(${item.id})"><i class="bi bi-trash"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = `<div class="text-danger small">Failed to load menu items.</div>`;
+            }
+        }
+
+        async function toggleMenuAvail(id, checked) {
+            try {
+                await apiFetch(`/api/menu/items/${id}/availability?available=${checked}`, { method: 'PATCH' });
+                showToast(`Item availability updated`, 'info');
+                loadMenuItems();
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+
+        function openMenuItemModal() {
+            document.getElementById('menu-modal-title').textContent = 'Add New Dish';
+            document.getElementById('menu-item-id').value = '';
+            document.getElementById('menu-item-form').reset();
+            new bootstrap.Modal(document.getElementById('menuItemModal')).show();
+        }
+
+        function openEditModal(item) {
+            document.getElementById('menu-modal-title').textContent = 'Edit Dish: ' + item.name;
+            document.getElementById('menu-item-id').value = item.id;
+            document.getElementById('modal-item-category').value = item.categoryId;
+            document.getElementById('modal-item-name').value = item.name;
+            document.getElementById('modal-item-price').value = item.price;
+            document.getElementById('modal-item-avail').value = item.isAvailable ? 'true' : 'false';
+            document.getElementById('modal-item-image').value = item.imageUrl || '';
+            document.getElementById('modal-item-desc').value = item.description || '';
+            new bootstrap.Modal(document.getElementById('menuItemModal')).show();
+        }
+
+        document.getElementById('menu-item-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('menu-item-id').value;
+            const categoryId = parseInt(document.getElementById('modal-item-category').value);
+            const name = document.getElementById('modal-item-name').value.trim();
+            const price = parseFloat(document.getElementById('modal-item-price').value);
+            const isAvailable = document.getElementById('modal-item-avail').value === 'true';
+            const imageUrl = document.getElementById('modal-item-image').value.trim();
+            const description = document.getElementById('modal-item-desc').value.trim();
+            const errBox = document.getElementById('modal-menu-error');
+
+            const payload = { categoryId, name, price, isAvailable, imageUrl, description };
+
+            try {
+                if (id) {
+                    await apiFetch(`/api/menu/items/${id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(payload)
+                    });
+                    showToast('Dish updated successfully!', 'success');
+                } else {
+                    await apiFetch('/api/menu/items', {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+                    showToast('New dish added to menu!', 'success');
+                }
+
+                bootstrap.Modal.getInstance(document.getElementById('menuItemModal')).hide();
+                loadKPIs();
+                loadMenuItems();
+            } catch (err) {
+                errBox.textContent = err.message || 'Operation failed.';
+                errBox.style.display = 'block';
+            }
+        });
+
+        async function deleteMenuItem(id) {
+            if (confirm('Delete this menu item?')) {
+                try {
+                    await apiFetch(`/api/menu/items/${id}`, { method: 'DELETE' });
+                    showToast('Item deleted successfully', 'info');
+                    loadKPIs();
+                    loadMenuItems();
+                } catch (e) {
+                    showToast(e.message, 'error');
+                }
+            }
+        }
+
+        // -------------------------------------------------------------
+        // Review Moderation
+        // -------------------------------------------------------------
+        async function loadReviews() {
+            const container = document.getElementById('admin-reviews-table');
+            try {
+                const res = await apiFetch('/api/reviews/admin/all');
+                const list = res.data;
+
+                if (!list || list.length === 0) {
+                    container.innerHTML = `<div class="text-center py-4 text-secondary">No reviews submitted yet.</div>`;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0">
+                            <thead>
+                                <tr class="text-secondary small text-uppercase">
+                                    <th>Guest</th>
+                                    <th>Rating</th>
+                                    <th>Comment</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${list.map(r => `
+                                    <tr>
+                                        <td class="fw-bold text-white">${escapeHtml(r.customerName)}</td>
+                                        <td class="text-warning">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</td>
+                                        <td class="text-secondary small" style="max-width: 300px;">"${escapeHtml(r.comment)}"</td>
+                                        <td>
+                                            <span class="badge ${r.isApproved ? 'bg-success' : 'bg-warning text-dark'}">
+                                                ${r.isApproved ? 'Approved' : 'Pending'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                ${!r.isApproved ? `
+                                                    <button class="btn btn-outline-success" onclick="moderateReview(${r.id}, true)">
+                                                        <i class="bi bi-check-lg"></i> Approve
+                                                    </button>
+                                                ` : `
+                                                    <button class="btn btn-outline-warning" onclick="moderateReview(${r.id}, false)">
+                                                        <i class="bi bi-eye-slash"></i> Hide
+                                                    </button>
+                                                `}
+                                                <button class="btn btn-outline-danger" onclick="deleteReview(${r.id})">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = `<div class="text-danger small">Failed to load reviews.</div>`;
+            }
+        }
+
+        async function moderateReview(id, approved) {
+            try {
+                await apiFetch(`/api/reviews/${id}/moderate?approved=${approved}`, { method: 'PATCH' });
+                showToast(approved ? 'Review approved for public display!' : 'Review hidden.', 'success');
+                loadKPIs();
+                loadReviews();
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+
+        async function deleteReview(id) {
+            if (confirm('Delete this customer review?')) {
+                try {
+                    await apiFetch(`/api/reviews/${id}`, { method: 'DELETE' });
+                    showToast('Review deleted.', 'info');
+                    loadKPIs();
+                    loadReviews();
+                } catch (e) {
+                    showToast(e.message, 'error');
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>

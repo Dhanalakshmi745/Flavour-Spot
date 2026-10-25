@@ -1,0 +1,255 @@
+/* ===================================================================
+   Flavor Spot - Modern Premium Restaurant Design System
+   =================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-gold: #E5A93C;
+    --primary-gold-hover: #C98E29;
+    --primary-gold-light: rgba(229, 169, 60, 0.15);
+    --bg-dark: #0B0F19;
+    --bg-surface: #111827;
+    --bg-surface-elevated: #1F2937;
+    --bg-glass: rgba(17, 24, 39, 0.75);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-gold: rgba(229, 169, 60, 0.3);
+    --text-primary: #F9FAFB;
+    --text-secondary: #9CA3AF;
+    --text-muted: #6B7280;
+    --badge-placed: #3B82F6;
+    --badge-preparing: #F59E0B;
+    --badge-ready: #10B981;
+    --badge-served: #8B5CF6;
+    --badge-cancelled: #EF4444;
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-font {
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.02em;
+}
+
+/* Glassmorphism Navigation */
+.navbar-custom {
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-color);
+    transition: var(--transition-smooth);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-gold) !important;
+}
+
+.navbar-brand span {
+    color: var(--text-primary);
+}
+
+.nav-link {
+    color: var(--text-secondary) !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem !important;
+    transition: var(--transition-smooth);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary-gold) !important;
+}
+
+/* Premium Buttons */
+.btn-gold {
+    background: linear-gradient(135deg, #F5BA42 0%, #D49428 100%);
+    color: #0B0F19 !important;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 0.65rem 1.4rem;
+    transition: var(--transition-smooth);
+    box-shadow: 0 4px 14px rgba(229, 169, 60, 0.25);
+}
+
+.btn-gold:hover {
+    background: linear-gradient(135deg, #FFC759 0%, #E5A93C 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(229, 169, 60, 0.4);
+}
+
+.btn-outline-gold {
+    background: transparent;
+    color: var(--primary-gold) !important;
+    border: 1.5px solid var(--primary-gold);
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.6rem 1.35rem;
+    transition: var(--transition-smooth);
+}
+
+.btn-outline-gold:hover {
+    background: var(--primary-gold-light);
+    transform: translateY(-2px);
+}
+
+/* Cards & Surfaces */
+.card-custom {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    transition: var(--transition-smooth);
+}
+
+.card-custom:hover {
+    border-color: var(--border-gold);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(rgba(11, 15, 25, 0.85), rgba(11, 15, 25, 0.95)), 
+                url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+    padding: 6.5rem 0 5rem 0;
+    position: relative;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: var(--primary-gold-light);
+    color: var(--primary-gold);
+    border: 1px solid var(--border-gold);
+    border-radius: 50px;
+    padding: 0.35rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+}
+
+/* Menu Items Grid */
+.menu-card-img {
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 13px;
+    border-top-right-radius: 13px;
+}
+
+.menu-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-gold);
+}
+
+.category-pill {
+    cursor: pointer;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-weight: 500;
+    transition: var(--transition-smooth);
+}
+
+.category-pill:hover, .category-pill.active {
+    background: var(--primary-gold);
+    color: #0B0F19;
+    border-color: var(--primary-gold);
+}
+
+/* Table Visual Grid */
+.table-card {
+    background: var(--bg-surface);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    text-align: center;
+}
+
+.table-card:hover {
+    border-color: var(--primary-gold);
+    transform: scale(1.03);
+}
+
+.table-card.selected {
+    border-color: var(--primary-gold);
+    background: rgba(229, 169, 60, 0.12);
+}
+
+/* Forms & Inputs */
+.form-control-custom, .form-select-custom {
+    background: var(--bg-surface-elevated) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+}
+
+.form-control-custom:focus, .form-select-custom:focus {
+    border-color: var(--primary-gold) !important;
+    box-shadow: 0 0 0 3px rgba(229, 169, 60, 0.2) !important;
+    outline: none;
+}
+
+/* Order & Reservation Status Badges */
+.badge-status {
+    padding: 0.35rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.badge-PLACED { background: rgba(59, 130, 246, 0.15); color: #60A5FA; border: 1px solid rgba(59, 130, 246, 0.3); }
+.badge-PREPARING { background: rgba(245, 158, 11, 0.15); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.3); }
+.badge-READY { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
+.badge-SERVED { background: rgba(139, 92, 246, 0.15); color: #A78BFA; border: 1px solid rgba(139, 92, 246, 0.3); }
+.badge-CANCELLED { background: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+.badge-PENDING { background: rgba(245, 158, 11, 0.15); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.3); }
+.badge-CONFIRMED { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
+.badge-COMPLETED { background: rgba(139, 92, 246, 0.15); color: #A78BFA; border: 1px solid rgba(139, 92, 246, 0.3); }
+
+/* Rating Stars */
+.star-rating {
+    color: #F59E0B;
+}
+
+/* Floating Cart Badge */
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #EF4444;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Footer */
+footer {
+    background: #080B12;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+}
