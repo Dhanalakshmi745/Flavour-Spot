@@ -195,15 +195,4 @@ To execute unit and integration test suites:
 - Or run tests directly on `ReservationServiceTest.java` and `OrderServiceTest.java`.
 
 ---
-
-## 8. Placement Resume Bullet Points
-
-You can copy and paste these points directly into your resume:
-
-- **Flavor Spot — Full-Stack Restaurant Reservation & Dining Management System** *(Java, Spring Boot, Spring Data JPA, Hibernate, MySQL, JavaScript, Bootstrap 5)*
-  - Designed and built an enterprise restaurant management system supporting table reservations, dynamic menu cataloging, food ordering, and role-based administration for customers and managers.
-  - Implemented an intelligent table reservation conflict-prevention algorithm using Spring Data JPA and composite MySQL indexes `(date, time, table_id)`, eliminating double-booking anomalies under concurrent requests.
-  - Enforced a server-side business validation pipeline requiring a verified `CONFIRMED` table reservation prior to order placement, preventing unauthorized and phantom kitchen orders.
-  - Built an authoritative server-side pricing engine with `BigDecimal` arithmetic, capturing historical unit price snapshots in line-item tables to guarantee transaction and financial audit integrity.
-  - Developed a mobile-responsive, glassmorphic UI using HTML5, CSS3, Bootstrap 5, and JavaScript, consuming REST APIs for real-time table availability lookups and live kitchen order progression tracking.
-  - Wrote comprehensive unit and integration test suites using **JUnit 5** and **Mockito**, achieving robust test coverage across booking validation, conflict rejection, and order recalculation workflows.
+n workflows.
